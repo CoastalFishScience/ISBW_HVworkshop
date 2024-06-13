@@ -1,0 +1,26 @@
+project:
+  type: website
+  output-dir: docs
+
+website:
+  title: "ISWB 15 Hypervolume Workshop"
+  navbar:
+    left:
+
+    - text: "Computer setup"
+      href: comp.html
+    # - text: 'Ex 1'
+    #   href: ws1.qmd
+    # - text: 'Ex 2'
+    #   href: ws2.qmd
+    # - text: 'Ex 3'
+    #   href: ws3.qmd
+
+format:
+  html:
+    theme: yeti
+    highlight: haddock
+    css: styles.css
+
+
+
