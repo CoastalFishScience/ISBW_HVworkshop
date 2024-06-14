@@ -1,0 +1,57 @@
+species,season,source,mean,sd,lowend,highend
+Bay anchovy,Wet,Algae,0.02,0.016,0,0.061
+Mojarra,Wet,Algae,0.004,0.004,0,0.013
+Pigfish,Wet,Algae,0.008,0.008,0,0.028
+Pinfish,Wet,Algae,0.028,0.018,0,0.062
+Pink shrimp,Wet,Algae,0.009,0.008,0,0.031
+Rainwater killifish,Wet,Algae,0.016,0.017,0,0.063
+Silver perch,Wet,Algae,0.02,0.024,0,0.091
+Bay anchovy,Wet,Epiphytes,0.3,0.067,0.153,0.418
+Mojarra,Wet,Epiphytes,0.04,0.02,0.009,0.084
+Pigfish,Wet,Epiphytes,0.076,0.034,0.019,0.149
+Pinfish,Wet,Epiphytes,0.096,0.053,0.015,0.203
+Pink shrimp,Wet,Epiphytes,0.047,0.027,0.008,0.109
+Rainwater killifish,Wet,Epiphytes,0.334,0.089,0.144,0.502
+Silver perch,Wet,Epiphytes,0.541,0.151,0.169,0.8
+Bay anchovy,Wet,Mangrove,0.332,0.021,0.29,0.371
+Mojarra,Wet,Mangrove,0.194,0.023,0.148,0.238
+Pigfish,Wet,Mangrove,0.252,0.032,0.185,0.312
+Pinfish,Wet,Mangrove,0.213,0.022,0.168,0.255
+Pink shrimp,Wet,Mangrove,0.147,0.036,0.072,0.215
+Rainwater killifish,Wet,Mangrove,0.189,0.025,0.136,0.236
+Silver perch,Wet,Mangrove,0.181,0.039,0.098,0.251
+Bay anchovy,Wet,Seagrass,0.348,0.059,0.238,0.476
+Mojarra,Wet,Seagrass,0.763,0.033,0.697,0.825
+Pigfish,Wet,Seagrass,0.664,0.05,0.566,0.761
+Pinfish,Wet,Seagrass,0.663,0.044,0.571,0.742
+Pink shrimp,Wet,Seagrass,0.797,0.048,0.703,0.893
+Rainwater killifish,Wet,Seagrass,0.461,0.078,0.306,0.616
+Silver perch,Wet,Seagrass,0.257,0.129,0.042,0.556
+Bay anchovy,Dry,Algae,0.052,0.026,0.013,0.115
+Mojarra,Dry,Algae,0.014,0.01,0.002,0.041
+Pigfish,Dry,Algae,0.024,0.019,0.002,0.072
+Pinfish,Dry,Algae,0.024,0.021,0.002,0.079
+Pink shrimp,Dry,Algae,0.132,0.037,0.063,0.207
+Rainwater killifish,Dry,Algae,0.073,0.029,0.016,0.132
+Silver perch,Dry,Algae,0.042,0.027,0.004,0.106
+Bay anchovy,Dry,Epiphytes,0.343,0.118,0.162,0.609
+Mojarra,Dry,Epiphytes,0.601,0.148,0.329,0.895
+Pigfish,Dry,Epiphytes,0.524,0.159,0.216,0.835
+Pinfish,Dry,Epiphytes,0.617,0.114,0.364,0.821
+Pink shrimp,Dry,Epiphytes,0.131,0.119,0.018,0.404
+Rainwater killifish,Dry,Epiphytes,0.386,0.126,0.184,0.7
+Silver perch,Dry,Epiphytes,0.403,0.12,0.188,0.669
+Bay anchovy,Dry,Mangrove,0.253,0.052,0.145,0.349
+Mojarra,Dry,Mangrove,0.178,0.051,0.059,0.262
+Pigfish,Dry,Mangrove,0.222,0.054,0.095,0.315
+Pinfish,Dry,Mangrove,0.244,0.051,0.134,0.335
+Pink shrimp,Dry,Mangrove,0.231,0.042,0.148,0.305
+Rainwater killifish,Dry,Mangrove,0.208,0.042,0.11,0.277
+Silver perch,Dry,Mangrove,0.243,0.045,0.143,0.323
+Bay anchovy,Dry,Seagrass,0.352,0.094,0.155,0.523
+Mojarra,Dry,Seagrass,0.208,0.114,0.024,0.445
+Pigfish,Dry,Seagrass,0.23,0.128,0.027,0.504
+Pinfish,Dry,Seagrass,0.115,0.079,0.015,0.31
+Pink shrimp,Dry,Seagrass,0.506,0.099,0.276,0.653
+Rainwater killifish,Dry,Seagrass,0.333,0.09,0.138,0.501
+Silver perch,Dry,Seagrass,0.312,0.091,0.137,0.492
