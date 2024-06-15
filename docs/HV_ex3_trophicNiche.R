@@ -1,57 +1,28 @@
----
-title: "Example 3: trophic niche of seagrass consumers"
-author: "W. Ryan James"
-date: "6/21/24"
-format: 
-  html:
-    toc: true
-    theme: yeti
----
+#' """ FL Bay seagrass consumer trophic niche
+#'     @author: W. Ryan James
+#'     date: 6/21/24"""
 
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(collapse = T, cache = T)
-```
-
-## Seasonal comparison of trophic niche of seagrass consumers
-This vignette uses hypervolumes to quantify the trophic niche of seagrass consumers. Hypervolumes are generated using mean and standard deviation resource use data from stable isotope mixing models. This process is repeated 50 times. Hypervolume overlap metrics, as well as size and centroid distance, are used to understand how consumers niches change between seasons. 
-
-[R script](HV_ex3_trophicNiche.R)
-
-## data
-The data used for this vignette comes from [James et al. 2022](https://doi.org/10.1093/icesjms/fsac112). The [resource use data](https://github.com/CoastalFishScience/ISBW_HVworkshop/blob/main/data/coral_PC.csv) consists of mean and standard deviation of four resources for each species in each season based on mixing model outputs. Data comes from species collected across Florida Bay, USA. 
-
-![Map of consumer sampling locations](maps/map_tn.png)
-
-```{r}
 library(tidyverse)
 library(hypervolume)
-library(truncnorm)
 
-# load all data
-d = read_csv('data/CESImixResults.csv')
-d
-```
-
-
-## Prepare data
-Here a custom function `HVvalues()` is used to generate random points from mean and standard deviation data between end points (lower and upper bounds) using the `truncnorm` package. Values can then be z-scored. 
-
-*** *Note chose either column names or column numbers for ID_rows and names either work but must be the same*
- - df = dataframe or tibble with each row containing 
- -        unique entry for making random points 
- - ID_rows = vector of column names or numbers with id information
- - names = column name or number of name of measure variables
- - mean = column name or column number of df with mean 
- - sd = column name or column number of df with sd 
- - n = number of points to randomly generate
- - z_score = T or F, if T z-scores values
- - end_points = T or F for if random points need to be generated between
- -        a high and low end point (e.g. 5% and 95% interval)
- -        low and high required if end_points = T
- - low = column name or column number of df with lower bound to sample in
- - high = column name or column number of df with upper bound to sample in
- 
-```{r}
+#Function to make random points of n length----
+# data from random sample with mean and sd but 
+# can be generated between a high and low value if end_points = T
+# *** Note chose either column names or column numbers for ID_rows and names
+# either work but must be the same
+# df = dataframe or tibble with each row containing 
+#        unique entry for making random points 
+# ID_rows = vector of column names or numbers with id information
+# names = column name or number of name of measure variables
+# mean = column name or column number of df with mean 
+# sd = column name or column number of df with sd 
+# n = number of points to randomly generate
+# z_score = T or F, if T z-scores values
+# end_points = T or F for if random points need to be generated between
+#        a high and low end point (e.g. 5% and 95% interval)
+#        low and high required if end_points = T
+# low = column name or column number of df with lower bound to sample in
+# high = column name or column number of df with upper bound to sample in
 HVvalues = function(df, ID_rows, names, mean, sd, n, z_score = F,
                     end_points = F, low = NULL, high = NULL){
   require(tidyverse)
@@ -136,10 +107,10 @@ HVvalues = function(df, ID_rows, names, mean, sd, n, z_score = F,
   
 }
 
-```
+# generate hvs ----
+# load all data
+d = read_csv('data/CESImixResults.csv')
 
-30 points are generated for each species in each season using `map()`, and this process is repeated 50 times. 
-```{r}
 # number or iterations
 reps = 50
 
@@ -162,12 +133,7 @@ df = d |>
 
 df
 
-
-```
-
-## Hypervolumes
-Hypervolumes are generated for each species and season and the size of each hypervolume is calculated.
-```{r, eval=F}
+# generate hypervolumes
 df = df |> 
   group_by(species, season, i) |> 
   nest() |> 
@@ -179,20 +145,13 @@ df = df |>
                                                      quantile.requested.type = "probability", 
                                                      chunk.size = 1000, 
                                                      verbose = F)),
-         hv_size = map_dbl(hv, \(hv) get_volume(hv)))
-```
+         hv_size = map_dbl(hv, \(hv) get_volume(hv)),
+         centroid = map(hv, \(hv) get_centroid(hv)))
 
-```{r, echo = F}
-df = readRDS('data/CESIhvAll.rds')
-```
-** *Do not try to view df in rstudio it will freeze your r since it is too big*
-```{r}
-head(df)
-```
+write_rds(df, 'data/CESIhvAll.rds', compress = 'gz')
 
-## Hypervolume metrics
-Combine each species and season to calculate the overlap and centroid distance of each species
-```{r, eval=F}
+
+# overlap within species by season ----
 ov_sn = df |> 
   select(species, season, hv, hv_size) |> 
   pivot_wider(names_from = season, values_from = c(hv,hv_size)) |> 
@@ -205,15 +164,12 @@ ov_sn = df |>
          size_rat, jaccard, sorensen,
          uniq_Wet = frac_unique_1, uniq_Dry = frac_unique_2, 
          dist_cent)
-```
+ov_sn
+write_csv(ov_sn, 'data/hvOv_season.csv')
 
-```{r, echo = F}
-ov_sn = read_csv('data/hvOv_season.csv')
-```
 
-### Hypervolume size
-```{r}
-df = ov_sn |> 
+# plot size
+df = read_csv('data/hvOv_season.csv') |> 
   pivot_longer(hv_size_Wet:hv_size_Dry,names_to = 'season',
                values_to = 'vol') |> 
   group_by(species, season) |> 
@@ -257,11 +213,10 @@ ggplot(df, aes(x = species, y = mean, color = season))+
         strip.text.x = element_text(size = 14),
         legend.text = element_text(size = 12))
 
-```
+ggsave("sizePres.png", units="in", width=10, height=7, dpi=600)
 
 
-### Centroid distance
-```{r}
+# centroid distance
 cols = c("Pinfish" = 'yellow2',
          "Mojarra" = 'slategray4',
          "Silver perch" = 'snow3',
@@ -304,10 +259,9 @@ ggplot(df, aes(x = species, y = mean, color = species))+
         strip.text.x = element_text(size = 14),
         legend.text = element_text(size = 12))
 
-```
+ggsave("ovPres.png", units="in", width=6, height=6, dpi=600)
 
-### Overlap
-```{r}
+# overlap
 df = ov_sn|> 
   group_by(species) |> 
   summarize(mean = mean(sorensen),
@@ -341,10 +295,9 @@ ggplot(df, aes(x = species, y = mean, color = species))+
         strip.text.x = element_text(size = 14),
         legend.text = element_text(size = 12))
 
-```
+ggsave("ovPres.png", units="in", width=6, height=6, dpi=600)
 
-### Percent unique 
-```{r}
+# percent unique 
 df = ov_sn|>  
   pivot_longer(uniq_Wet:uniq_Dry,names_to = 'season',
                values_to = 'vol') |> 
@@ -389,5 +342,4 @@ ggplot(df, aes(x = species, y = mean, color = season))+
         strip.text.x = element_text(size = 14),
         legend.text = element_text(size = 12))
 
-```
-
+ggsave("uniquePres.png", units="in", width=10, height=7, dpi=600)
