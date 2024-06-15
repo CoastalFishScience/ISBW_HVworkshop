@@ -7,14 +7,14 @@ website:
   navbar:
     left:
 
-    - text: "Computer setup"
+    - text: "R & Rstudio"
       href: comp.html
-    # - text: 'Ex 1'
-    #   href: ws1.qmd
-    # - text: 'Ex 2'
-    #   href: ws2.qmd
-    # - text: 'Ex 3'
-    #   href: ws3.qmd
+    - text: 'Ex 1'
+      href: ex1.qmd
+    - text: 'Ex 2'
+      href: ex2.qmd
+    - text: 'Ex 3'
+      href: ex3.qmd
 
 format:
   html:

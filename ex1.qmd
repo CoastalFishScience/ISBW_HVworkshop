@@ -1,0 +1,457 @@
+---
+title: "Example 1: Stability of seagrass ecosystems in Florida Bay"
+author: "W. Ryan James"
+date: "6/21/24"
+format: 
+  html:
+    toc: true
+    theme: yeti
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(collapse = T, cache = T)
+```
+
+## Stability of seagrass ecosystems in Florida Bay
+This vignette uses hypervolumes to understand the temporal stability of seagrass ecosystems. Hypervolumes are generated using common seagrass monitoring metrics yearly from 2007-2023 across four basins in Florida Bay, USA. Centroid distance is used to compare mean conditions across all years to determine temporal stability and variable importance is calculated to determine the metric driving stability within each basin. 
+
+[R script](HV_ex1_sgState.R)
+
+## data
+The data used for this example comes from the [South Florida Fisheries Habitat Assessment Program](https://myfwc.com/research/habitat/seagrasses/fhap/) which monitors seagrass habitats annually using quadrat samples. The [benthic cover data](https://github.com/CoastalFishScience/ISBW_HVworkshop/blob/main/data/FLbay_SAV.csv) consists of data from 4 basins and measures 6 metrics of the SAV community. Data is averaged across stations for each metric. 
+
+  - BASIN = Basin sampled
+  - YEAR = year of monitoring
+  - STATION = monitoring station 
+  - TT = *Thalassia testudium* percent cover
+  - HW = *Halodule wrightii* percent cover
+  - SF = *Syringodium filliforme* percent cover
+  - TMA = total macroalgae percent cover
+  - TDR = total drift algae percent cover
+  - sg_rich = seagrass species richness\
+  
+![Map of sampling basins](maps/map_stab.png)
+
+```{r}
+# load libraries
+library(tidyverse)
+library(hypervolume)
+
+# load sav monitoring data 
+df = read_csv('data/FLbay_SAV.csv') 
+head(df)
+```
+
+## Prepare data
+Because hypervolumes can be generated with any continuous data as an axes, many of the times the units are not combatible. Blonder et al. [2014](https://doi-org.ezproxy.fiu.edu/10.1111/geb.12146) & [2018](https://doi-org.ezproxy.fiu.edu/10.1111/2041-210X.12865) to convert all of the axes into the same units. This can be done by taking the z-score of the values to convert units into standard deviations. Z-scoring data can be done with the formula:
+$$ z = \frac{x_{i}-\overline{x}}{sd} $$ Where $x_{i}$ is a value, $\overline{x}$ is the mean, and $sd$ is the standard deviation. By z-scoring each axis, 0 is the mean of that axis, a value of 1 means that the value is 1 standard deviation above the global mean of that axis, and a value of -1 is 1 standard deviation below the global mean of the axis. In R this can be done manually or with the `scale()` function. 
+
+Hypervolumes cannot be made when all values for a single axis are the same (e.g. all values 0 for a species cover in a basin for a year), so we can add a tiny bit of variation in order to make the hypervolume.
+
+We then can `nest()` the data to take advantage of the `purr` package and `map()`.
+
+```{r}
+# z-score and nest data to make hypervolume
+set.seed(14)
+df = df |> 
+  # z score data across all sites and years
+  mutate(across(c(TT:sg_rich), scale), 
+  # add tiny amount so when all values the same can make hv       
+         across(c(TT:sg_rich), 
+                ~map_dbl(., ~. + rnorm(1, mean = 0, sd = 0.0001)))) |> 
+  # remove station from dataset
+  select(-STATION) |> 
+  # nest data by basin and year
+  group_by(BASIN, YEAR) |> 
+  nest() 
+head(df)
+```
+
+## Generate hypervolumes
+Hypervolumes are a multidimensional tool that is based on Hutchinson's *n*-dimensional niche concept and we can build them with the `hypervolume` package. \
+
+With a nested dataset of our columns that we want to build hypervolumes for we can use `mutate()` and `map()` to generate the hypervolume. 
+
+We can also use `map()` and `get_centroid()` to extract centroid values of each hypervolume. 
+```{r, eval=F}
+# generate hypervolumes
+df = df |> 
+  mutate(hv = map(data, \(data) hypervolume_gaussian(data, name = paste(BASIN,YEAR,sep = '_'),
+                                                     samples.per.point = 1000,
+                                                     kde.bandwidth = estimate_bandwidth(data), 
+                                                     sd.count = 3, 
+                                                     quantile.requested = 0.95, 
+                                                     quantile.requested.type = "probability", 
+                                                     chunk.size = 1000, 
+                                                     verbose = F)),
+         centroid = map(hv, \(hv) get_centroid(hv)))
+```
+
+```{r, echo=FALSE}
+df = readRDS('data/SAV_hvs.rds')
+```
+
+** *Do not try to open dataframe with hv column it will hang because it is too big*
+```{r}
+head(df)
+
+```
+
+If wanting to save you can save output as `.rds`
+```{r eval=F}
+saveRDS(df, 'data/SAV_hvs.rds') 
+```
+
+## plotting hypervolumes 
+We can plot multiple hypervolumes by joining them together 
+```{r}
+hvj = hypervolume_join(df$hv[[1]], df$hv[[2]])
+
+plot(hvj, pairplot = T, colors=c('goldenrod','blue'),
+     show.3d=FALSE,plot.3d.axes.id=NULL,
+     show.axes=TRUE, show.frame=TRUE,
+     show.random=T, show.density=TRUE,show.data=F,
+     show.legend=T, limits=c(-5,5), 
+     show.contour=F, contour.lwd= 2, 
+     contour.type='alphahull', 
+     contour.alphahull.alpha=0.25,
+     contour.ball.radius.factor=1, 
+     contour.kde.level=0.01,
+     contour.raster.resolution=100,
+     show.centroid=TRUE, cex.centroid=2,
+     point.alpha.min=0.2, point.dark.factor=0.5,
+     cex.random=0.5,cex.data=1,cex.axis=1.5,cex.names=2,cex.legend=2,
+     num.points.max.data = 100000, num.points.max.random = 200000, reshuffle=TRUE,
+     plot.function.additional=NULL,
+     verbose=FALSE
+)
+```
+
+
+## Centroid distance
+We can use the centroid distance to compare mean conditions between years to understand the stability. Centroid distance can be calculated by a set of hypervolumes. This can be done by creating a data frame with all of the possible year combinations, and merging dataframes together to easily join. We can subtract the centroids from each comparison to generate the centroid difference of each axis.
+
+```{r, eval=F}
+# comparison of across each year
+df_y= tibble(y1 = unique(df$YEAR),
+             y2 = unique(df$YEAR)) |> 
+  expand(y1,y2)
+
+# make all unique year comparisons 
+df_y = df_y[!duplicated(t(apply(df_y,1,sort))),] %>% 
+  filter(!(y1 == y2))
+
+# make two df to join all unique comparisons  
+df1 = df |> 
+  select(BASIN, y1 = YEAR, hv1 = hv, cent1 = centroid)
+
+df2 = df |> 
+  select(BASIN, y2 = YEAR, hv2 = hv, cent2 = centroid)
+
+
+# create data frame of all data and make yearly comparisons
+df_cd = tibble(BASIN = rep(unique(df$BASIN),
+                           each = nrow(df_y)),
+               y1 = rep(df_y$y1, times = length(unique(df$BASIN))),
+               y2 = rep(df_y$y2, times = length(unique(df$BASIN)))) |> 
+  inner_join(df1, by = c('BASIN', 'y1')) |> 
+  inner_join(df2, by = c('BASIN', 'y2')) |> 
+  mutate(ychange = y2-y1,
+  # join hypervolumees in a set for centroid distance
+         set = map2(hv1,hv2, \(hv1, hv2) hypervolume_set(hv1, hv2, check.memory = F, verbose = F)),
+  # calculate centroid distance 
+         dist_cent = map2_dbl(hv1, hv2, \(hv1,hv2) hypervolume_distance(hv1, hv2, type = 'centroid', check.memory=F)),
+  # calculate the difference of centroid of each axis
+         dif = map2(cent1, cent2, \(cent1,cent2) cent2 - cent1)) |> 
+  #unnest centroid differences
+  unnest_wider(dif) |> 
+  # select only metrics of interest
+  select(BASIN, y1, y2, ychange,  
+         dist_cent, TT, HW, SF, sg_rich, TMA, TDR)
+
+# save output
+write_csv(df_cd, 'data/SAV_centDist.csv')
+
+```
+
+```{r, echo=F}
+df_cd = read_csv('data/SAV_centDist.csv')
+```
+
+```{r}
+df_cd
+```
+
+Plot centroid distance for each basin.
+```{r}
+df_cd = read_csv('data/SAV_centDist.csv') |> 
+  mutate(BASIN = factor(BASIN, levels = 
+                          c('JON', 'RKB', 'RAN', 'EAG')))
+
+ggplot(df_cd, aes(BASIN, dist_cent, fill = BASIN))+
+  geom_hline(aes(yintercept = 1), linetype = 'dashed', linewidth = 1)+
+  geom_point(aes(color = BASIN), size = 1, 
+             position=position_jitterdodge(dodge.width = 1, jitter.width = 1))+
+  # geom_errorbar(aes(ymin = lc, ymax = uc), linewidth = 2, width = 0)+
+  geom_boxplot(alpha = 0.6, outliers = F)+
+  labs(x = 'Basin', y = 'Centroid distance')+
+  scale_fill_viridis_d(option = 'turbo')+
+  scale_color_viridis_d(option = 'turbo')+
+  theme_bw()+
+  theme(axis.title = element_text(size = 14), 
+        axis.text = element_text(size = 14, colour = "gray0"), 
+        plot.title = element_text(size = 14, hjust=0.5),
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        legend.position = 'none',
+        legend.title = element_text(size = 14),
+        strip.text.x = element_text(size = 14),
+        legend.text = element_text(size = 12))
+```
+
+## Trend in stability 
+We can look across the number of years to understand the trend in stability. By fitting three possible models we can determine the trend of time of the centroid distance. When intercept model is the best, we can determine that the trend is static and not changing with the number of years between comparison. If linear, the centroid distance can indicate a shift in state overtime, and a quadratic with a maximum at middle values can indicate a disturbance with recovery in state. 
+
+```{r}
+library(MuMIn)
+df_cd = df_cd |> 
+  group_by(BASIN) |>
+  nest() |> 
+  # fit intercept, linear, and quadratic model
+  mutate(m_int = map(data, \(df)lm(dist_cent~1, data = df)),
+         m_lin = map(data, \(df)lm(dist_cent~ychange, data = df)),
+         m_quad = map(data, \(df)lm(dist_cent~ychange + I(ychange^2), data = df)),
+         AICc_int = map_dbl(m_int, \(x) AICc(x)),
+         AICc_lin = map_dbl(m_lin, \(x) AICc(x)),
+         AICc_quad = map_dbl(m_quad, \(x) AICc(x)),
+         model = case_when(
+           AICc_int - min(c(AICc_int,AICc_lin,AICc_quad)) <= 4 ~ 'Intercept',
+           AICc_lin < AICc_quad ~ 'Linear',
+           AICc_quad < AICc_lin ~ 'Quadratic'))
+
+# unnest data 
+d = df_cd |> 
+  select(BASIN, data, model) |> 
+  unnest(cols = c(data)) |>  
+  mutate(BASIN = factor(BASIN, levels = 
+                          c('JON', 'RKB', 'RAN', 'EAG')))
+
+ggplot(d, aes(ychange, dist_cent, color = BASIN))+
+  geom_hline(aes(yintercept = 1), linetype = 'dashed')+
+  geom_point(size = 2.5)+
+  geom_smooth(data = d |> filter(model == 'Intercept'),
+              method = 'lm', formula = y~1, 
+              linewidth = 1, color = 'black')+
+  geom_smooth(data = d |> filter(model == 'Linear'),
+              method = 'lm', formula = y~x, 
+              linewidth = 1, color = 'black')+
+  geom_smooth(data = d |> filter(model == 'Quadratic'),
+              method = 'lm', formula = y~x+I(x^2), 
+              linewidth = 1, color = 'black')+
+  facet_wrap(~BASIN,  nrow = 1)+
+  labs(x = 'Years between comparison', y = 'Centroid distance')+
+  scale_color_viridis_d(option = 'turbo')+
+  theme_bw()+
+  theme(axis.title = element_text(size = 14), 
+        axis.text.y = element_text(size = 14, colour = "black"),
+        axis.text.x = element_text(size = 12, colour = "black"), 
+        plot.title = element_text(size = 14, hjust=0.5),
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        legend.position = 'none',
+        legend.title = element_text(size = 14),
+        strip.text.x = element_text(size = 14),
+        legend.text = element_text(size = 12))
+
+```
+
+## Variable importance 
+Becuase centroid distance is the multivariate difference in mean conditions between hypervolumes, we can determine the influence of each axis on the overall change. This can be done by removing an axis and calculating the euclidean distance without that axis. Using the formula 
+$$ imp_x = cd/cd_x - 1$$ 
+where $imp_x$ is the importance of axis $x$, $cd$ is centroid distance with all axes, and $cd_x$ is the centroid distance excluding axis $x$. 
+
+```{r}
+# pivot data longer 
+df_c = read_csv('data/SAV_centDist.csv') |> 
+  mutate(across(TT:TDR, \(x) x^2)) |> 
+  pivot_longer(TT:TDR, names_to = 'axis', values_to = 'dist')
+
+# create vector of unique axes
+ax = unique(df_c$axis)
+
+# for loop to calculate variable importance of each axis
+for(i in 1:length(ax)){
+  d = df_c |> 
+    # remove axis 
+    filter(axis != ax[i]) |> 
+    group_by(BASIN,y1,y2,ychange,dist_cent) |> 
+    #calculate euclidean distance without axis 
+    summarise(cd = sqrt(sum(dist))) |> 
+    # calculate importance of axis
+    mutate(imp = (dist_cent/cd) - 1,
+           axis = ax[i])
+  
+  # bind data into new data frame to store 
+  if(i == 1){
+    df_imp = d
+  }else{
+    df_imp = bind_rows(df_imp, d)
+  }
+}
+
+# calculate relative importance across all years for each basin
+df_cdi = df_imp |> 
+  #filter(ychange == 1) |>
+  group_by(BASIN,axis) |>
+  summarize(imp = mean(imp)) |>
+  group_by(BASIN) |> 
+  mutate(s_imp = imp/max(imp))|> 
+  mutate(BASIN = factor(BASIN, levels = 
+                          c('JON', 'RKB', 'RAN', 'EAG')),
+         axis = factor(axis, levels = c('TDR', 'TMA', 'sg_rich',
+                                        'SF', 'HW', 'TT')))
+# labeler function for plotting
+y_label_formatter = function(x) {
+  ifelse(x %% 1 == 0, formatC(x, format = "f", digits = 0), formatC(x, format = "f", digits = 2))
+}
+
+ggplot(df_cdi, aes(axis, s_imp, fill = BASIN))+
+  geom_col()+
+  labs(x = 'Variable', y = 'Centroid distance variable importance')+
+  coord_flip()+
+  theme_bw()+
+  facet_wrap(~BASIN,  nrow = 2)+
+  scale_y_continuous(
+    breaks = c(0.0, 0.25, 0.5, 0.75, 1.0),
+    limits = c(0, 1),
+    labels = y_label_formatter) +
+  scale_x_discrete(labels = c('Total drift algae', 'Total Macroalgae', 'Seagrass richness',
+                              expression(italic('Syrngodium filliforme')), 
+                              expression(italic('Halodule wrightii')),
+                              expression(italic('Thalassia testudium'))))+
+  scale_fill_viridis_d(option = 'turbo')+
+  theme(axis.title = element_text(size = 14), 
+        axis.text = element_text(size = 14, colour = "gray0"), 
+        plot.title = element_text(size = 14, hjust=0.5),
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        legend.position = 'none',
+        legend.title = element_text(size = 14),
+        strip.text.x = element_text(size = 14),
+        legend.text = element_text(size = 12))
+
+```
+
+
+## Background info
+### Merge/Join
+If two data frames contain different columns of data, then they can be merged together with the family of join functions.
+
+ +`left_join()` = uses left df as template and joins all matching columns from right df 
+ +`right_join()` = uses right df as template and joins all matching columns from left df
+ +`inner_join()` = only matches columns contained in both dfs
+ +`full_join()` = combines all rows in both dfs
+
+```{r join}
+library(tidyverse)
+
+left = tibble(name = c('a', 'b', 'c'),
+              n = c(1, 6, 7), 
+              bio = c(100, 43, 57))
+
+right = tibble(name = c('a', 'b', 'd', 'e'),
+               cals = c(500, 450, 570, 600))
+
+left_join(left, right, by = 'name')
+
+right_join(left, right, by = 'name')
+
+inner_join(left, right, by = 'name')
+
+full_join(left, right, by = 'name')
+
+# multiple matches
+fish = tibble(species = rep(c('Salmon', 'Cod'),times = 3),
+              year = rep(c(1999,2005,2020), each = 2),
+              catch = c(50, 60, 40, 50, 60, 100))
+
+col = tibble(species = c('Salmon', 'Cod'),
+             coast = c('West', 'East'))
+
+left_join(fish, col, by = 'species')
+
+
+```
+
+### scaling data
+Because hypervolumes can be generated with any continuous data as an axes, many of the times the units are not combatible. Blonder et al. [2014](https://doi-org.ezproxy.fiu.edu/10.1111/geb.12146) & [2018](https://doi-org.ezproxy.fiu.edu/10.1111/2041-210X.12865) to convert all of the axes into the same units. This can be done by taking the z-score of the values to convert units into standard deviations. Z-scoring data can be done with the formula:
+$$ z = \frac{x_{i}-\overline{x}}{sd} $$ Where $x_{i}$ is a value, $\overline{x}$ is the mean, and $sd$ is the standard deviation. By z-scoring each axis, 0 is the mean of that axis, a value of 1 means that the value is 1 standard deviation above the global mean of that axis, and a value of -1 is 1 standard deviation below the global mean of the axis. In R this can be done manually or with the `scale()` function. 
+
+```{r}
+fish = tibble(species = rep(c('Salmon', 'Cod'),times = 3),
+              year = rep(c(1999,2005,2020), each = 2),
+              catch = c(50, 60, 40, 50, 60, 100))
+
+#
+fish = fish |> 
+  mutate(zcatch1 = (catch - mean(catch))/sd(catch), # manual
+         zcatch2 = scale(catch)) # with scale
+
+fish 
+
+# center = mean, scale = sd
+fish$zcatch2
+```
+
+### nesting data
+One benefit of `tibbles` is that they can contain list columns. This means that we can make columns of `tibbles` that are nested within a dataset. Nesting creates a list-column of data frames; unnesting flattens it back out into regular columns. Nesting is a implicitly summarising operation: you get one row for each group defined by the non-nested columns. This is useful in conjunction with other summaries that work with whole datasets, most notably models. This can be done with the `nest()` and then flattened with `unnest()`
+
+```{r}
+fish = tibble(species = rep(c('Salmon', 'Cod'),times = 3),
+              year = rep(c(1999,2005,2020), each = 2),
+              catch = c(50, 60, 40, 50, 60, 100))
+
+# using group_by
+fish_nest = fish |> 
+  group_by(species) |> 
+  nest()
+
+fish_nest
+fish_nest$data
+
+# using .by in nest
+# column name becomes data unless you change .key
+fish_nest2 = fish |> 
+  nest(.by = year, .key = 'df')
+
+fish_nest2
+fish_nest2$df
+
+```
+
+### map
+#### `purr`
+The newest and new standard package with `tidyverse` is `purr` with its set of `map()` functions. Some similarity to `plyr` (and base) and `dplyr` functions but with more consistent names and arguments. Notice that map function can have some specification for the type of output.
+  + `map()` makes a list.
+  + `map_lgl()` makes a logical vector.
+  + `map_int()` makes an integer vector.
+  + `map_dbl()` makes a double vector.
+  + `map_chr()` makes a character vector.
+
+```{r, error = T}
+df = iris  |> 
+  select(-Species)
+#summary statistics
+map_dbl(df, mean)
+
+# using map with mutate and nest
+d = tibble(species = rep(c('Salmon', 'Cod'),times = 3),
+           year = rep(c(1999,2005,2020), each = 2),
+           catch = c(50, 60, 40, 50, 60, 100)) |> 
+  nest(.by = species) |> 
+  mutate(correlation = map(data, \(data) cor.test(data$year, data$catch)))
+
+d
+d$correlation
+
+```

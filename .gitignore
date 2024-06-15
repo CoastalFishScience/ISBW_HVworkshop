@@ -4,3 +4,8 @@
 .Ruserdata
 
 /.quarto/
+
+data/*.rds
+/ex1_cache/
+/ex2_cache/
+/ex3_cache/
