@@ -1,6 +1,6 @@
 ---
 title: "Example 3: trophic niche of seagrass consumers"
-author: "W. Ryan James, Benjamin Jones, Rolando Santos, Jennifer Rehage, Marianna Coppola, Gina Badlowski, Jonathan Rodemann"
+author: "W. Ryan James, Rolando O. Santos, Benjamin Jones, Jennifer Rehage, Marianna Coppola, Gina Badlowski, Jonathan Rodemann"
 date: "6/21/24"
 format: 
   html:
@@ -18,7 +18,7 @@ This vignette uses hypervolumes to quantify the trophic niche of seagrass consum
 [R script](HV_ex3_trophicNiche.R)
 
 ## data
-The data used for this vignette comes from [James et al. 2022](https://doi.org/10.1093/icesjms/fsac112). The [resource use data](https://github.com/CoastalFishScience/ISBW_HVworkshop/blob/main/data/coral_PC.csv) consists of mean and standard deviation of four resources for each species in each season based on mixing model outputs. Data comes from species collected across Florida Bay, USA. 
+The data used for this vignette comes from [James et al. 2022](https://doi.org/10.1093/icesjms/fsac112). The [resource use data](https://github.com/CoastalFishScience/ISBW_HVworkshop/blob/main/data/CESImixResults.csv) consists of mean and standard deviation of four resources for each species in each season based on mixing model outputs. Data comes from species collected across Florida Bay, USA. 
 
 ![Map of consumer sampling locations](maps/map_tn.png)
 

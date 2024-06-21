@@ -7,7 +7,7 @@ format: html
 W. Ryan James (Florida International University, USA) – wjames@fiu.edu
 
 ## Co-conveners: 
-Benjamin Jones (Project Seagrass, FIU), Rolando Santos (FIU), Jennifer Rehage (FIU), Marianna Coppola (FIU), Gina Badlowski (FIU), Jonathan Rodemann (FIU) 
+Rolando O. Santos (FIU), Benjamin Jones (Project Seagrass, FIU), Jennifer Rehage (FIU), Marianna Coppola (FIU), Gina Badlowski (FIU), Jonathan Rodemann (FIU) 
 
 ## About this workshop: 
 Welcome to our Hypervolume workshop! The goal of this workshop is to familiarize participants with the concept of hypervolumes, case studies and applications, and how to run the analyses in R. We will start the workshop by providing background and theory on hypervolumes. We will then present multiple case studies using hypervolumes in seagrass and other ecosystems. These case studies will be followed by an interest survey and a walkthrough of the data and R code used to conduct the hypervolume analyses. R scripts and markdown/quarto files will be provided to encourage participants to conduct hypervolume analysis on their own data and promote comparative cross system studies.\
@@ -18,7 +18,7 @@ Hypervolume modelling is a flexible multivariate modelling technique based on Hu
 ## Resources
 [Workshop GitHub](https://github.com/CoastalFishScience/ISBW_HVworkshop) – Website that houses data and code for our hypervolume workshop\
 
-[Workshop slides]()
+[Workshop slides](ISBW_HVworkshop.pdf)
 
 ### Hypervolume publications:
 [Blonder et al. 2014. The n-dimensional hypervolume. Global Ecology and Biogeography](https://doi-org.ezproxy.fiu.edu/10.1111/geb.12146)\

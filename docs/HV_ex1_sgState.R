@@ -1,5 +1,5 @@
 #' """ FL Bay SAV state and stability using centroid distance
-#'     @author: W. Ryan James
+#'     @author: W. Ryan James, Rolando O. Santos, Benjamin Jones, Jennifer Rehage, Marianna Coppola, Gina Badlowski, Jonathan Rodemann
 #'     date: 6/21/24"""
 
 # load libraries

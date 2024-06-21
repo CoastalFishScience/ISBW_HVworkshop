@@ -1,6 +1,6 @@
 ---
 title: "Example 2: Trait diversity of coral communities"
-author: "W. Ryan James, Benjamin Jones, Rolando Santos, Jennifer Rehage, Marianna Coppola, Gina Badlowski, Jonathan Rodemann"
+author: "W. Ryan James, Rolando O. Santos, Benjamin Jones, Jennifer Rehage, Marianna Coppola, Gina Badlowski, Jonathan Rodemann"
 date: "6/21/24"
 format: 
   html:
@@ -18,7 +18,7 @@ This vignette uses hypervolumes to understand the spatial variation in trait div
 [R script](HV_ex2_traits.R)
 
 ## data
-The data used for this example comes from the [NOAA]() which monitors coral benthic communities throughout Puerto Rico. The [benthic cover data](https://github.com/CoastalFishScience/ISBW_HVworkshop/blob/main/data/coral_PC.csv) consists of percent cover (pc = mean percent cover, sd = standard deviation percent cover) from coral species collected across 8 regions.  Data is averaged across sites within each region. The [coral trait data](https://github.com/CoastalFishScience/ISBW_HVworkshop/blob/main/data/coral_traits.csv) is based on average values of each trait for each species from published literature values. 
+The data used for this example comes from the [NOAA](https://www.ncei.noaa.gov/access/metadata/landing-page/bin/iso?id=gov.noaa.nodc:NCRMP-Benthic-PR) which monitors coral benthic communities throughout Puerto Rico. The [benthic cover data](https://github.com/CoastalFishScience/ISBW_HVworkshop/blob/main/data/coral_PC.csv) consists of percent cover (pc = mean percent cover, sd = standard deviation percent cover) from coral species collected across 8 regions.  Data is averaged across sites within each region. The [coral trait data](https://github.com/CoastalFishScience/ISBW_HVworkshop/blob/main/data/coral_traits.csv) is based on average values of each trait for each species from published literature values. 
 
 ![Map of sampling regions](maps/map_region.png)
 

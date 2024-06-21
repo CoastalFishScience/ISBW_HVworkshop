@@ -1,5 +1,5 @@
 #' """ FL Bay seagrass consumer trophic niche
-#'     @author: W. Ryan James
+#'     @author: W. Ryan James, Rolando O. Santos, Benjamin Jones, Jennifer Rehage, Marianna Coppola, Gina Badlowski, Jonathan Rodemann
 #'     date: 6/21/24"""
 
 library(tidyverse)

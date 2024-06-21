@@ -1,6 +1,6 @@
 ---
 title: "Example 1: Stability of seagrass ecosystems in Florida Bay"
-author: "W. Ryan James, Benjamin Jones, Rolando Santos, Jennifer Rehage, Marianna Coppola, Gina Badlowski, Jonathan Rodemann"
+author: "W. Ryan James, Rolando O. Santos, Benjamin Jones, Jennifer Rehage, Marianna Coppola, Gina Badlowski, Jonathan Rodemann"
 date: "6/21/24"
 format: 
   html:

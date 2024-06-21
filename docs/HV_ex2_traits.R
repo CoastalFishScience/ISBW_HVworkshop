@@ -1,5 +1,5 @@
 #' """ Puerto Rico coral benthic community trait diversity 
-#'     @author: W. Ryan James
+#'     @author: W. Ryan James, Rolando O. Santos, Benjamin Jones, Jennifer Rehage, Marianna Coppola, Gina Badlowski, Jonathan Rodemann
 #'     date: 6/21/24"""
 
 # load libraries
