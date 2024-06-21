@@ -12,7 +12,7 @@ library(hypervolume)
 # STATION = monitoring station 
 # TT = Thalassia testudium percent cover
 # HW = Halodule wrightii percent cover
-# SF = Syringodium filliforme percent cover
+# SF = Syringodium filiforme percent cover
 # TMA = total macroalgae percent cover
 # TDR = total drift algae percent cover
 # sg_rich = seagrass species richness
@@ -253,7 +253,7 @@ ggplot(df_cdi, aes(axis, s_imp, fill = BASIN))+
     limits = c(0, 1),
     labels = y_label_formatter) +
   scale_x_discrete(labels = c('Total drift algae', 'Total Macroalgae', 'Seagrass richness',
-                              expression(italic('Syrngodium filliforme')), 
+                              expression(italic('Syringodium filiforme')), 
                               expression(italic('Halodule wrightii')),
                               expression(italic('Thalassia testudium'))))+
   scale_fill_viridis_d(option = 'turbo')+

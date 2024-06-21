@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>ISWB 15 Hypervolume Workshop - ISBW 15 Workshop: Hypervolume modeling</title>
+<title>ISWB 15 Hypervolume Workshop</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -85,6 +85,10 @@ ul.task-list li input[type="checkbox"] {
  <span class="menu-text">R &amp; Rstudio</span></a>
   </li>  
   <li class="nav-item">
+    <a class="nav-link" href="./bg.html" rel="" target="">
+ <span class="menu-text">Useful functions</span></a>
+  </li>  
+  <li class="nav-item">
     <a class="nav-link" href="./ex1.html" rel="" target="">
  <span class="menu-text">Ex 1</span></a>
   </li>  
@@ -111,52 +115,64 @@ ul.task-list li input[type="checkbox"] {
 <!-- main -->
 <main class="content" id="quarto-document-content">
 
-<header id="title-block-header" class="quarto-title-block default">
-<div class="quarto-title">
-<h1 class="title">ISBW 15 Workshop: Hypervolume modeling</h1>
-</div>
 
 
-
-<div class="quarto-title-meta">
-
-    
-  
-    
-  </div>
-  
-
-</header>
-
-<section id="bsc-6926-b52-r-workshop-on-population-and-community-ecological-modeling" class="level4">
-<h4 class="anchored" data-anchor-id="bsc-6926-b52-r-workshop-on-population-and-community-ecological-modeling">BSC 6926 B52: R workshop on population and community ecological modeling</h4>
-<p>This is the course website for the R workshop that coincides with PCB 5423 (Advanced Ecology). This website will have the Rmarkdown lessons for each workshop. Find the course schedule and Syllabus <a href="sylb.html">here</a>. This course will be based in R and information about downloading R and Rstudio can be found <a href="comp.html">here</a>.</p>
+<section id="ws01-hypervolume-modelling-a-multivariate-tool-for-seagrass-ecosystem-assessments" class="level1">
+<h1><em>WS01 – Hypervolume modelling: a multivariate tool for seagrass ecosystem assessments</em></h1>
+<section id="main-conveners" class="level2">
+<h2 class="anchored" data-anchor-id="main-conveners">Main-conveners:</h2>
+<p>W. Ryan James (Florida International University, USA) – wjames@fiu.edu</p>
 </section>
-<section id="class-resources" class="level3">
-<h3 class="anchored" data-anchor-id="class-resources">Class Resources</h3>
-<ul>
-<li><a href="https://fiu.zoom.us/j/94001884298?pwd=b25VZTh6eHFlOVdjRDhrbUV6OTBVZz09">Zoom link</a></li>
-<li><a href="https://github.com/BSC6926-B52-Fall2023/workshopScripts">Github repository for workshop R scripts</a></li>
-<li><a href="https://github.com/BSC6926-B52-Fall2023/BSC6926-B52-Fall2023.github.io">Website Github repository</a></li>
-<li>Textbook for R exercises (S) Stevens, M.H.H. 2010. A primer of ecology with R. ISBN 978-0-387-89881-0 (Electronically available at FIU Library) <a href="https://hankstevens.github.io/Primer-of-Ecology/">E-book version</a></li>
-</ul>
+<section id="co-conveners" class="level2">
+<h2 class="anchored" data-anchor-id="co-conveners">Co-conveners:</h2>
+<p>Benjamin Jones (Project Seagrass, FIU), Rolando Santos (FIU), Jennifer Rehage (FIU), Marianna Coppola (FIU), Gina Badlowski (FIU), Jonathan Rodemann (FIU)</p>
 </section>
-<section id="r-resources" class="level3">
-<h3 class="anchored" data-anchor-id="r-resources">R Resources</h3>
-<ul>
-<li>R for Data Science by Hadley Wickham and Garret Grolemund – An introduction to programming with R: <a href="https://r4ds.hadley.nz/" class="uri">https://r4ds.hadley.nz/</a><br>
-</li>
-<li>Quick-R by datacamp: Quick overview on R programming and statistical approaches. There are more tutorials, but you will be required to register<br>
-</li>
-<li>RStudio Cloud Training Exercises: <a href="https://rstudio.cloud/learn/primers" class="uri">https://rstudio.cloud/learn/primers</a><br>
-</li>
-<li>Virtual Ecology Portal/EcoVirtual R Package: Website that provides various examples of population and community models that will be discussed in class and the workshop. There is also an R package (EcoVirtual) you can use to run various models included on this website: <a href="http://ecovirtual.ib.usp.br/doku.php?id=start" class="uri">http://ecovirtual.ib.usp.br/doku.php?id=start</a><br>
-</li>
-<li>ModernDive: Introductory book on R and statistical inference: <a href="https://moderndive.com/index.html" class="uri">https://moderndive.com/index.html</a></li>
-<li>Rstudio: learn R https://education.rstudio.com/learn/beginner/</li>
-</ul>
+<section id="about-this-workshop" class="level2">
+<h2 class="anchored" data-anchor-id="about-this-workshop">About this workshop:</h2>
+<p>Welcome to our Hypervolume workshop! The goal of this workshop is to familiarize participants with the concept of hypervolumes, case studies and applications, and how to run the analyses in R. We will start the workshop by providing background and theory on hypervolumes. We will then present multiple case studies using hypervolumes in seagrass and other ecosystems. These case studies will be followed by an interest survey and a walkthrough of the data and R code used to conduct the hypervolume analyses. R scripts and markdown/quarto files will be provided to encourage participants to conduct hypervolume analysis on their own data and promote comparative cross system studies.<br>
+</p>
+<p>Hypervolume modelling is a flexible multivariate modelling technique based on Hutchinson’s <em>n</em>-dimensional hypervolume concept of a niche that describes the ecological requirements of an individual, species, or population in order to persist in a location. Hypervolumes are defined as a set of points that enclose all values of <em>n</em> variables in <em>n</em>-dimensional space. Advances led by Blonder and colleagues (see references) provide multivariate kernel density estimation methods that allows for construction of hypervolumes with a range of variables that expand applications of hypervolumes to a variety of ecological and evolutionary questions and processes beyond niche theory. Examples include quantifying ecosystem status following restoration, mapping the resilience of coastal habitats, and determining the impact of disturbance on trophic functioning (see resources). By leveraging the concept of hypervolumes, seagrass ecologists can gain a more nuanced and comprehensive understanding of their complex interactions and dynamics, facilitatiing conservation, management and restoration.<br>
+</p>
+</section>
+<section id="resources" class="level2">
+<h2 class="anchored" data-anchor-id="resources">Resources</h2>
+<p><a href="https://github.com/CoastalFishScience/ISBW_HVworkshop">Workshop GitHub</a> – Website that houses data and code for our hypervolume workshop<br>
+</p>
+<p><a href="">Workshop slides</a></p>
+<section id="hypervolume-publications" class="level3">
+<h3 class="anchored" data-anchor-id="hypervolume-publications">Hypervolume publications:</h3>
+<p><a href="https://doi-org.ezproxy.fiu.edu/10.1111/geb.12146">Blonder et al.&nbsp;2014. The n-dimensional hypervolume. Global Ecology and Biogeography</a><br>
+</p>
+<p><a href="https://doi-org.ezproxy.fiu.edu/10.1111/2041-210X.12865">Blonder et al.&nbsp;2018. New approaches for delineating n-dimensional hypervolumes. Methods in Ecology &amp; Evolution</a><br>
+</p>
+<p><a href="https://doi.org/10.1111/ecog.03187">Blonder 2017. Hypervolume concepts in niche- and trait-based ecology. Ecography</a><br>
+</p>
+</section>
+<section id="case-study-publications" class="level3">
+<h3 class="anchored" data-anchor-id="case-study-publications">Case study publications:</h3>
+<p>Hypervolume size: <a href="">Santos et al.&nbsp;2022. Influence of seascape spatial pattern on the trophic niche of an omnivorous fish. Ecosphere</a><br>
+Centroid distance: <a href="https://doi.org/10.1111/1365-2745.13552">Jones et al.&nbsp;2020. Stress gradients interact with disturbance to reveal alternative states in salt marsh: Multivariate resilience at the landscape scale. Journal of Ecology</a><br>
+Overlap: <a href="https://doi.org/10.1111/oik.06919">Helsen et al.&nbsp;(2020). Inter‐and intraspecific trait variation shape multidimensional trait overlap between two plant invaders and the invaded communities. Oikos</a><br>
+</p>
+</section>
+<section id="other-hypervolume-examples" class="level3">
+<h3 class="anchored" data-anchor-id="other-hypervolume-examples">Other hypervolume examples</h3>
+<p><a href="https://doi.org/10.1016/j.scitotenv.2019.134801">James et al 2020. Assessment of food web recovery following restoration using resource niche metrics. Science of the Total Environment.</a><br>
+</p>
+<p><a href="https://doi.org/10.1111/oik.07026">Lesser et al.&nbsp;2020. Trophic niche size and overlap decreases with increasing ecosystem productivity. Oikos</a><br>
+</p>
+<p><a href="https://doi.org/10.1007/s10021-023-00825-5">Calhoun-Grosch et al.&nbsp;2023. Trophic niche metrics reveal long-term shift in Florida Bay food webs. Ecosystems</a><br>
+</p>
+<p><a href="https://doi.org/10.1073/pnas.1317722111">Lamanna et al.&nbsp;2014. Functional trait space and the latitudinal diversity gradient. Proceedings of the National Academy of Sciences of the United States of America</a><br>
+</p>
+<p><a href="https://doi.org/10.1111/1365-2435.14344">Laini et al.&nbsp;2023. N-dimensional hypervolumes in trait-based ecology: Does occupancy rate matter?. Functional Ecology</a><br>
+</p>
+<p><a href="https://doi.org/10.1111/2041-210X.14310">Chen et al.&nbsp;2024. Statistical inference methods for n-dimensional hypervolumes: Applications to niches and functional diversity. Methods in Ecology &amp; Evolution</a><br>
+</p>
 
 
+</section>
+</section>
 </section>
 
 </main> <!-- /main -->

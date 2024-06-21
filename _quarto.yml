@@ -9,6 +9,8 @@ website:
 
     - text: "R & Rstudio"
       href: comp.html
+    - text: "Useful functions"
+      href: bg.html  
     - text: 'Ex 1'
       href: ex1.qmd
     - text: 'Ex 2'

@@ -1,6 +1,6 @@
 ---
 title: "Example 3: trophic niche of seagrass consumers"
-author: "W. Ryan James"
+author: "W. Ryan James, Benjamin Jones, Rolando Santos, Jennifer Rehage, Marianna Coppola, Gina Badlowski, Jonathan Rodemann"
 date: "6/21/24"
 format: 
   html:
@@ -210,57 +210,7 @@ ov_sn = df |>
 ```{r, echo = F}
 ov_sn = read_csv('data/hvOv_season.csv')
 ```
-
-### Hypervolume size
-```{r}
-df = ov_sn |> 
-  pivot_longer(hv_size_Wet:hv_size_Dry,names_to = 'season',
-               values_to = 'vol') |> 
-  group_by(species, season) |> 
-  summarize(mean = mean(vol),
-            median = median(vol),
-            low = quantile(vol, 0.025),
-            up = quantile(vol, 0.975)) |> 
-  mutate(season = factor(season, levels = c('hv_size_Wet', 
-                                            'hv_size_Dry')))
-
-ggplot(df, aes(x = species, y = mean, color = season))+
-  geom_pointrange(aes(ymin = low, ymax = up),
-                  size = 1.5, linewidth = 1.5, fatten = 2, 
-                  position=position_dodge(width = 0.5))+
-  labs(x = 'Species', y = 'Trophic niche width',
-       color = 'Season') +
-  scale_fill_manual(values = c('hv_size_Wet' = 'skyblue3', 
-                               'hv_size_Dry' = 'indianred3'),
-                    labels = c('hv_size_Wet' = 'Wet', 
-                               'hv_size_Dry' = 'Dry')) +
-  scale_color_manual(values = c('hv_size_Wet' = 'skyblue3', 
-                                'hv_size_Dry' = 'indianred3'),
-                     labels = c('hv_size_Wet' = 'Wet',
-                                'hv_size_Dry' = 'Dry')) +
-  scale_x_discrete(labels = c("Bay \nanchovy",
-                              "Mojarra",
-                              "Pigfish",
-                              "Pinfish",
-                              "Pink \nshrimp",
-                              "Rainwater \nkillifish",
-                              "Silver \nperch" ))+
-  theme_bw()+
-  theme(axis.title = element_text(size = 14), 
-        axis.text.y = element_text(size = 14, colour = "black"), 
-        axis.text.x = element_text(size = 12, colour = "black"),
-        plot.title = element_text(size = 14, hjust=0.5),
-        panel.grid.major = element_blank(),
-        panel.grid.minor = element_blank(),
-        legend.position = 'right',
-        legend.title = element_text(size = 14),
-        strip.text.x = element_text(size = 14),
-        legend.text = element_text(size = 12))
-
-```
-
-
-### Centroid distance
+### Overlap
 ```{r}
 cols = c("Pinfish" = 'yellow2',
          "Mojarra" = 'slategray4',
@@ -270,44 +220,7 @@ cols = c("Pinfish" = 'yellow2',
          "Pink shrimp" = 'pink',
          "Rainwater killifish" = 'firebrick',
          'All' = 'black')
-df = ov_sn|> 
-  group_by(species) |> 
-  summarize(mean = mean(dist_cent),
-            median = median(dist_cent),
-            low = quantile(dist_cent, 0.025),
-            up = quantile(dist_cent, 0.975))
 
-ggplot(df, aes(x = species, y = mean, color = species))+
-  geom_hline(aes(yintercept = 1), linewidth = 1, linetype = 'dashed')+
-  geom_pointrange(aes(ymin = low, ymax = up),
-                  size = 1.5, linewidth = 1.5, fatten = 2, 
-                  position=position_dodge(width = 0.5))+
-  labs(x = NULL, y = 'Centroid distance') +
-  scale_x_discrete(labels = c("Bay \nanchovy",
-                              "Mojarra",
-                              "Pigfish",
-                              "Pinfish",
-                              "Pink \nshrimp",
-                              "Rainwater \nkillifish",
-                              "Silver \nperch" ))+
-  scale_color_manual(values = cols)+
-  scale_y_continuous(limits = c(0,4.1))+
-  theme_bw()+
-  theme(axis.title = element_text(size = 14), 
-        axis.text.y = element_text(size = 14, colour = "black"), 
-        axis.text.x = element_text(size = 12, colour = "black"),
-        plot.title = element_text(size = 14, hjust=0.5),
-        panel.grid.major = element_blank(),
-        panel.grid.minor = element_blank(),
-        legend.position = 'none',
-        legend.title = element_text(size = 14),
-        strip.text.x = element_text(size = 14),
-        legend.text = element_text(size = 12))
-
-```
-
-### Overlap
-```{r}
 df = ov_sn|> 
   group_by(species) |> 
   summarize(mean = mean(sorensen),
@@ -320,8 +233,7 @@ ggplot(df, aes(x = species, y = mean, color = species))+
                   size = 1.5, linewidth = 1.5, fatten = 2, 
                   position=position_dodge(width = 0.5))+
   labs(x = NULL, y = 'Niche overlap') +
-  scale_x_discrete(labels = c("All",
-                              "Bay \nanchovy",
+  scale_x_discrete(labels = c("Bay \nanchovy",
                               "Mojarra",
                               "Pigfish",
                               "Pinfish",
@@ -385,6 +297,93 @@ ggplot(df, aes(x = species, y = mean, color = season))+
         panel.grid.major = element_blank(),
         panel.grid.minor = element_blank(),
         legend.position = 'right',
+        legend.title = element_text(size = 14),
+        strip.text.x = element_text(size = 14),
+        legend.text = element_text(size = 12))
+
+```
+
+### Hypervolume size
+```{r}
+df = ov_sn |> 
+  pivot_longer(hv_size_Wet:hv_size_Dry,names_to = 'season',
+               values_to = 'vol') |> 
+  group_by(species, season) |> 
+  summarize(mean = mean(vol),
+            median = median(vol),
+            low = quantile(vol, 0.025),
+            up = quantile(vol, 0.975)) |> 
+  mutate(season = factor(season, levels = c('hv_size_Wet', 
+                                            'hv_size_Dry')))
+
+ggplot(df, aes(x = species, y = mean, color = season))+
+  geom_pointrange(aes(ymin = low, ymax = up),
+                  size = 1.5, linewidth = 1.5, fatten = 2, 
+                  position=position_dodge(width = 0.5))+
+  labs(x = 'Species', y = 'Trophic niche width',
+       color = 'Season') +
+  scale_fill_manual(values = c('hv_size_Wet' = 'skyblue3', 
+                               'hv_size_Dry' = 'indianred3'),
+                    labels = c('hv_size_Wet' = 'Wet', 
+                               'hv_size_Dry' = 'Dry')) +
+  scale_color_manual(values = c('hv_size_Wet' = 'skyblue3', 
+                                'hv_size_Dry' = 'indianred3'),
+                     labels = c('hv_size_Wet' = 'Wet',
+                                'hv_size_Dry' = 'Dry')) +
+  scale_x_discrete(labels = c("Bay \nanchovy",
+                              "Mojarra",
+                              "Pigfish",
+                              "Pinfish",
+                              "Pink \nshrimp",
+                              "Rainwater \nkillifish",
+                              "Silver \nperch" ))+
+  theme_bw()+
+  theme(axis.title = element_text(size = 14), 
+        axis.text.y = element_text(size = 14, colour = "black"), 
+        axis.text.x = element_text(size = 12, colour = "black"),
+        plot.title = element_text(size = 14, hjust=0.5),
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        legend.position = 'right',
+        legend.title = element_text(size = 14),
+        strip.text.x = element_text(size = 14),
+        legend.text = element_text(size = 12))
+
+```
+
+
+### Centroid distance
+```{r}
+df = ov_sn|> 
+  group_by(species) |> 
+  summarize(mean = mean(dist_cent),
+            median = median(dist_cent),
+            low = quantile(dist_cent, 0.025),
+            up = quantile(dist_cent, 0.975))
+
+ggplot(df, aes(x = species, y = mean, color = species))+
+  geom_hline(aes(yintercept = 1), linewidth = 1, linetype = 'dashed')+
+  geom_pointrange(aes(ymin = low, ymax = up),
+                  size = 1.5, linewidth = 1.5, fatten = 2, 
+                  position=position_dodge(width = 0.5))+
+  labs(x = NULL, y = 'Centroid distance') +
+  scale_x_discrete(labels = c("Bay \nanchovy",
+                              "Mojarra",
+                              "Pigfish",
+                              "Pinfish",
+                              "Pink \nshrimp",
+                              "Rainwater \nkillifish",
+                              "Silver \nperch" ))+
+  scale_color_manual(values = cols)+
+  scale_y_continuous(limits = c(0,4.1))+
+  theme_bw()+
+  theme(axis.title = element_text(size = 14), 
+        axis.text.y = element_text(size = 14, colour = "black"), 
+        axis.text.x = element_text(size = 12, colour = "black"),
+        plot.title = element_text(size = 14, hjust=0.5),
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        legend.position = 'none',
         legend.title = element_text(size = 14),
         strip.text.x = element_text(size = 14),
         legend.text = element_text(size = 12))

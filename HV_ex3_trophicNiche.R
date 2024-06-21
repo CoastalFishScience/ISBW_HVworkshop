@@ -150,8 +150,98 @@ df = df |>
 
 write_rds(df, 'data/CESIhvAll.rds', compress = 'gz')
 
+# overlap
+cols = c("Pinfish" = 'yellow2',
+         "Mojarra" = 'slategray4',
+         "Silver perch" = 'snow3',
+         "Bay anchovy" = 'deepskyblue1',
+         "Pigfish" = 'orange', 
+         "Pink shrimp" = 'pink',
+         "Rainwater killifish" = 'firebrick',
+         'All' = 'black')
 
-# overlap within species by season ----
+df = ov_sn|> 
+  group_by(species) |> 
+  summarize(mean = mean(sorensen),
+            median = median(sorensen),
+            low = quantile(sorensen, 0.025),
+            up = quantile(sorensen, 0.975))
+
+ggplot(df, aes(x = species, y = mean, color = species))+
+  geom_pointrange(aes(ymin = low, ymax = up),
+                  size = 1.5, linewidth = 1.5, fatten = 2, 
+                  position=position_dodge(width = 0.5))+
+  labs(x = NULL, y = 'Niche overlap') +
+  scale_x_discrete(labels = c("Bay \nanchovy",
+                              "Mojarra",
+                              "Pigfish",
+                              "Pinfish",
+                              "Pink \nshrimp",
+                              "Rainwater \nkillifish",
+                              "Silver \nperch" ))+
+  scale_color_manual(values = cols)+
+  theme_bw()+
+  theme(axis.title = element_text(size = 14), 
+        axis.text.y = element_text(size = 14, colour = "black"), 
+        axis.text.x = element_text(size = 12, colour = "black"),
+        plot.title = element_text(size = 14, hjust=0.5),
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        legend.position = 'none',
+        legend.title = element_text(size = 14),
+        strip.text.x = element_text(size = 14),
+        legend.text = element_text(size = 12))
+
+# ggsave("ovPres.png", units="in", width=7, height=6, dpi=600)
+
+# percent unique 
+df = ov_sn|>  
+  pivot_longer(uniq_Wet:uniq_Dry,names_to = 'season',
+               values_to = 'vol') |> 
+  group_by(species, season) |> 
+  summarize(mean = mean(vol),
+            median = median(vol),
+            low = quantile(vol, 0.025),
+            up = quantile(vol, 0.975)) |> 
+  mutate(season = factor(season, levels = c('uniq_Wet', 
+                                            'uniq_Dry')))
+
+ggplot(df, aes(x = species, y = mean, color = season))+
+  geom_pointrange(aes(ymin = low, ymax = up),
+                  size = 1.5, linewidth = 1.5, fatten = 2, 
+                  position=position_dodge(width = 0.5))+
+  labs(x = 'Species', y = 'Niche volume unique',
+       color = 'Season') +
+  scale_fill_manual(values = c('uniq_Wet' = 'skyblue3', 
+                               'uniq_Dry' = 'indianred3'),
+                    labels = c('uniq_Wet' = 'Wet', 
+                               'uniq_Dry' = 'Dry')) +
+  scale_color_manual(values = c('uniq_Wet' = 'skyblue3', 
+                                'uniq_Dry' = 'indianred3'),
+                     labels = c('uniq_Wet' = 'Wet',
+                                'uniq_Dry' = 'Dry')) +
+  scale_x_discrete(labels = c("Bay \nanchovy",
+                              "Mojarra",
+                              "Pigfish",
+                              "Pinfish",
+                              "Pink \nshrimp",
+                              "Rainwater \nkillifish",
+                              "Silver \nperch" ))+
+  theme_bw()+
+  theme(axis.title = element_text(size = 14), 
+        axis.text.y = element_text(size = 14, colour = "black"), 
+        axis.text.x = element_text(size = 12, colour = "black"),
+        plot.title = element_text(size = 14, hjust=0.5),
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        legend.position = 'right',
+        legend.title = element_text(size = 14),
+        strip.text.x = element_text(size = 14),
+        legend.text = element_text(size = 12))
+
+# ggsave("uniquePres.png", units="in", width=10, height=7, dpi=600)
+
+# overlap within species by season 
 ov_sn = df |> 
   select(species, season, hv, hv_size) |> 
   pivot_wider(names_from = season, values_from = c(hv,hv_size)) |> 
@@ -212,19 +302,11 @@ ggplot(df, aes(x = species, y = mean, color = season))+
         legend.title = element_text(size = 14),
         strip.text.x = element_text(size = 14),
         legend.text = element_text(size = 12))
-
-ggsave("sizePres.png", units="in", width=10, height=7, dpi=600)
+# 
+# ggsave("sizePres.png", units="in", width=10, height=7, dpi=600)
 
 
 # centroid distance
-cols = c("Pinfish" = 'yellow2',
-         "Mojarra" = 'slategray4',
-         "Silver perch" = 'snow3',
-         "Bay anchovy" = 'deepskyblue1',
-         "Pigfish" = 'orange', 
-         "Pink shrimp" = 'pink',
-         "Rainwater killifish" = 'firebrick',
-         'All' = 'black')
 df = ov_sn|> 
   group_by(species) |> 
   summarize(mean = mean(dist_cent),
@@ -259,87 +341,6 @@ ggplot(df, aes(x = species, y = mean, color = species))+
         strip.text.x = element_text(size = 14),
         legend.text = element_text(size = 12))
 
-ggsave("ovPres.png", units="in", width=6, height=6, dpi=600)
+# ggsave("cdPres.png", units="in", width=7, height=6, dpi=600)
 
-# overlap
-df = ov_sn|> 
-  group_by(species) |> 
-  summarize(mean = mean(sorensen),
-            median = median(sorensen),
-            low = quantile(sorensen, 0.025),
-            up = quantile(sorensen, 0.975))
 
-ggplot(df, aes(x = species, y = mean, color = species))+
-  geom_pointrange(aes(ymin = low, ymax = up),
-                  size = 1.5, linewidth = 1.5, fatten = 2, 
-                  position=position_dodge(width = 0.5))+
-  labs(x = NULL, y = 'Niche overlap') +
-  scale_x_discrete(labels = c("All",
-                              "Bay \nanchovy",
-                              "Mojarra",
-                              "Pigfish",
-                              "Pinfish",
-                              "Pink \nshrimp",
-                              "Rainwater \nkillifish",
-                              "Silver \nperch" ))+
-  scale_color_manual(values = cols)+
-  theme_bw()+
-  theme(axis.title = element_text(size = 14), 
-        axis.text.y = element_text(size = 14, colour = "black"), 
-        axis.text.x = element_text(size = 12, colour = "black"),
-        plot.title = element_text(size = 14, hjust=0.5),
-        panel.grid.major = element_blank(),
-        panel.grid.minor = element_blank(),
-        legend.position = 'none',
-        legend.title = element_text(size = 14),
-        strip.text.x = element_text(size = 14),
-        legend.text = element_text(size = 12))
-
-ggsave("ovPres.png", units="in", width=6, height=6, dpi=600)
-
-# percent unique 
-df = ov_sn|>  
-  pivot_longer(uniq_Wet:uniq_Dry,names_to = 'season',
-               values_to = 'vol') |> 
-  group_by(species, season) |> 
-  summarize(mean = mean(vol),
-            median = median(vol),
-            low = quantile(vol, 0.025),
-            up = quantile(vol, 0.975)) |> 
-  mutate(season = factor(season, levels = c('uniq_Wet', 
-                                            'uniq_Dry')))
-
-ggplot(df, aes(x = species, y = mean, color = season))+
-  geom_pointrange(aes(ymin = low, ymax = up),
-                  size = 1.5, linewidth = 1.5, fatten = 2, 
-                  position=position_dodge(width = 0.5))+
-  labs(x = 'Species', y = 'Niche volume unique',
-       color = 'Season') +
-  scale_fill_manual(values = c('uniq_Wet' = 'skyblue3', 
-                               'uniq_Dry' = 'indianred3'),
-                    labels = c('uniq_Wet' = 'Wet', 
-                               'uniq_Dry' = 'Dry')) +
-  scale_color_manual(values = c('uniq_Wet' = 'skyblue3', 
-                                'uniq_Dry' = 'indianred3'),
-                     labels = c('uniq_Wet' = 'Wet',
-                                'uniq_Dry' = 'Dry')) +
-  scale_x_discrete(labels = c("Bay \nanchovy",
-                              "Mojarra",
-                              "Pigfish",
-                              "Pinfish",
-                              "Pink \nshrimp",
-                              "Rainwater \nkillifish",
-                              "Silver \nperch" ))+
-  theme_bw()+
-  theme(axis.title = element_text(size = 14), 
-        axis.text.y = element_text(size = 14, colour = "black"), 
-        axis.text.x = element_text(size = 12, colour = "black"),
-        plot.title = element_text(size = 14, hjust=0.5),
-        panel.grid.major = element_blank(),
-        panel.grid.minor = element_blank(),
-        legend.position = 'right',
-        legend.title = element_text(size = 14),
-        strip.text.x = element_text(size = 14),
-        legend.text = element_text(size = 12))
-
-ggsave("uniquePres.png", units="in", width=10, height=7, dpi=600)
